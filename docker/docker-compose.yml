@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  easylatex:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PYTHON_VERSION=3.9
+    volumes:
+      - ./config:/app/config
+      - ./output:/app/output
+    stdin_open: true
+    tty: true
