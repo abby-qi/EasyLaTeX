@@ -12,13 +12,13 @@
 - [x] 创建预设LaTeX模板
 - [x] 创建README.md文档
 
-## 阶段2: 核心技术预研
-- [ ] 验证Electron前端↔Python后端IPC通信
-- [ ] 验证可视化公式生成功能
-- [ ] 验证TinyTeX打包与编译
-- [ ] 验证Docker打包Electron多平台包
-- [ ] 验证Python-docx导出Word功能
-- [ ] 输出核心技术预研报告
+## 阶段2: 核心技术预研 ✅
+- [x] 验证Electron前端↔Python后端IPC通信
+- [x] 验证可视化公式生成功能
+- [x] 验证TinyTeX打包与编译
+- [x] 验证Docker打包Electron多平台包
+- [x] 验证Python-docx导出Word功能
+- [x] 输出核心技术预研报告
 
 ## 阶段3: MVP核心开发
 
