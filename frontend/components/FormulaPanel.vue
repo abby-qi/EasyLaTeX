@@ -1,8 +1,16 @@
 <template>
   <div class="formula-panel">
     <h3>公式符号</h3>
+    <div class="search-box">
+      <input
+        v-model="searchQuery"
+        type="text"
+        placeholder="搜索符号..."
+        @input="filterSymbols"
+      />
+    </div>
     <div class="symbol-categories">
-      <div class="category" v-for="category in categories" :key="category.name">
+      <div class="category" v-for="category in filteredCategories" :key="category.name">
         <h4>{{ category.name }}</h4>
         <div class="symbols">
           <button
@@ -25,6 +33,7 @@ export default {
   name: 'FormulaPanel',
   data() {
     return {
+      searchQuery: '',
       categories: [
         {
           name: '希腊字母',
@@ -65,6 +74,21 @@ export default {
       ]
     };
   },
+  computed: {
+    filteredCategories() {
+      if (!this.searchQuery) {
+        return this.categories;
+      }
+
+      return this.categories.map(category => ({
+        name: category.name,
+        symbols: category.symbols.filter(symbol =>
+          symbol.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+          symbol.display.includes(this.searchQuery)
+        )
+      }));
+    }
+  },
   methods: {
     async insertSymbol(symbol) {
       try {
@@ -72,10 +96,12 @@ export default {
           symbol: symbol.id,
           name: symbol.name
         });
-        this.$emit('formula-inserted', result);
+        this.$emit('formula-inserted', result.latexCode);
       } catch (error) {
         console.error('Failed to insert formula:', error);
       }
+    },
+    filterSymbols() {
     }
   }
 };
@@ -86,6 +112,18 @@ export default {
   padding: 20px;
   background: #f5f5f5;
   border-radius: 8px;
+}
+
+.search-box {
+  margin-bottom: 15px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
 .symbol-categories {
@@ -124,5 +162,9 @@ export default {
   background: #007bff;
   color: white;
   border-color: #007bff;
+}
+
+.symbol-btn:active {
+  transform: scale(0.95);
 }
 </style>
