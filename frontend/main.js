@@ -1,5 +1,5 @@
-const { createApp } = require('vue');
-const MainPage = require('./pages/MainPage.vue').default;
+import { createApp } from 'vue';
+import MainPage from './pages/MainPage.vue';
 
 const app = createApp(MainPage);
 

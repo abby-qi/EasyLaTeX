@@ -1,6 +1,7 @@
-const { ipcMain } = require('electron');
+const { ipcMain, dialog } = require('electron');
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs').promises;
 
 const pythonScriptPath = path.join(__dirname, '../backend');
 
@@ -103,5 +104,50 @@ ipcMain.handle('export-tex', async (event, data, outputPath) => {
     return { success: true };
   } catch (error) {
     return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('open-file-dialog', async () => {
+  try {
+    const result = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        { name: 'LaTeX Files', extensions: ['tex'] },
+        { name: 'Text Files', extensions: ['txt'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return null;
+    }
+
+    const filePath = result.filePaths[0];
+    const content = await fs.readFile(filePath, 'utf-8');
+    return { content };
+  } catch (error) {
+    throw new Error(`打开文件失败: ${error.message}`);
+  }
+});
+
+ipcMain.handle('save-file-dialog', async (event, content) => {
+  try {
+    const result = await dialog.showSaveDialog({
+      filters: [
+        { name: 'LaTeX Files', extensions: ['tex'] },
+        { name: 'Text Files', extensions: ['txt'] },
+        { name: 'All Files', extensions: ['*'] }
+      ],
+      defaultPath: 'document.tex'
+    });
+
+    if (result.canceled || !result.filePath) {
+      return { success: false };
+    }
+
+    await fs.writeFile(result.filePath, content, 'utf-8');
+    return { success: true, filePath: result.filePath };
+  } catch (error) {
+    throw new Error(`保存文件失败: ${error.message}`);
   }
 });

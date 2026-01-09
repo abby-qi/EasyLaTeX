@@ -1,0 +1,39 @@
+{
+  "formulaPanel": {
+    "title": "公式符号",
+    "tableEditor": "表格编辑器",
+    "pdfPreview": "PDF预览",
+    "compile": "编译",
+    "exportPdf": "导出PDF",
+    "exportWord": "导出Word",
+    "exportLatex": "导出LaTeX"
+  },
+  "tableEditor": {
+    "title": "表格编辑器",
+    "createTable": "创建表格",
+    "generateLatex": "生成LaTeX",
+    "rows": "行数",
+    "columns": "列数",
+    "insertRow": "插入行",
+    "insertColumn": "插入列",
+    "deleteRow": "删除行",
+    "deleteColumn": "删除列"
+  },
+  "previewPanel": {
+    "title": "PDF预览",
+    "compile": "编译",
+    "exportPdf": "导出PDF"
+  },
+  "mainPage": {
+    "exportWord": "导出Word",
+    "exportLatex": "导出LaTeX",
+    "advancedMode": "高级模式"
+  },
+  "advancedMode": {
+    "title": "高级模式",
+    "compile": "编译",
+    "exportPdf": "导出PDF",
+    "exportWord": "导出Word",
+    "exportLatex": "导出LaTeX"
+  }
+}

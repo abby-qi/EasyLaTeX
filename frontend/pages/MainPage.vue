@@ -45,7 +45,44 @@ export default {
       texContent: ''
     };
   },
+  mounted() {
+    window.electronAPI.onNewFile(() => {
+      this.newFile();
+    });
+    window.electronAPI.onOpenFile(() => {
+      this.openFile();
+    });
+    window.electronAPI.onSaveFile(() => {
+      this.saveFile();
+    });
+  },
   methods: {
+    newFile() {
+      if (this.texContent && !confirm('确定要新建文件吗？当前内容将被清空。')) {
+        return;
+      }
+      this.texContent = '';
+    },
+    async openFile() {
+      try {
+        const result = await window.electronAPI.openFileDialog();
+        if (result && result.content) {
+          this.texContent = result.content;
+        }
+      } catch (error) {
+        alert(`打开文件失败: ${error.message}`);
+      }
+    },
+    async saveFile() {
+      try {
+        const result = await window.electronAPI.saveFileDialog(this.texContent);
+        if (result && result.success) {
+          alert('文件保存成功!');
+        }
+      } catch (error) {
+        alert(`保存文件失败: ${error.message}`);
+      }
+    },
     handleFormulaInserted(latexCode) {
       this.texContent += latexCode + '\n';
     },
