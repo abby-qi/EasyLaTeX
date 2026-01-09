@@ -2,9 +2,6 @@
 pylatex==1.4.2
 python-docx==1.1.0
 
-# LaTeX compilation
-subprocess32==3.5.4.post1
-
 # Data processing
 jsonschema==4.20.0
 

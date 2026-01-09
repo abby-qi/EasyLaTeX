@@ -30,13 +30,14 @@ EasyLaTeX是一款专为研究生、中小学老师等非专业用户设计的�
 - **前端**: Electron + Vue 3
 - **后端**: Python 3.9+
 - **构建**: Docker
-- **核心依赖**: TinyTeX、python-docx、pylatex
+- **LaTeX编译**: MiKTeX / TinyTeX
+- **核心依赖**: python-docx、pylatex
 
 ## 📦 安装与运行
 
 ### 方式一: 使用预编译安装包(推荐)
 
-从 [GitHub Releases](https://github.com/yourusername/easylatex/releases) 下载对应平台的安装包:
+从 [GitHub Releases](https://github.com/abby-qi/EasyLaTeX/releases) 下载对应平台的安装包:
 
 - Windows: `EasyLaTeX-Setup-x.x.x.exe`
 - macOS: `EasyLaTeX-x.x.x.dmg`
@@ -51,13 +52,14 @@ EasyLaTeX是一款专为研究生、中小学老师等非专业用户设计的�
 - Node.js 18+
 - Python 3.9+
 - npm 或 yarn
+- MiKTeX 或 TinyTeX (用于LaTeX编译)
 
 #### 安装步骤
 
 1. 克隆仓库
 ```bash
-git clone https://github.com/yourusername/easylatex.git
-cd easylatex
+git clone https://github.com/abby-qi/EasyLaTeX.git
+cd EasyLaTeX
 ```
 
 2. 安装依赖
@@ -207,8 +209,8 @@ EasyLaTeX Team
 
 ## 📮 联系方式
 
-- 项目主页: [https://github.com/yourusername/easylatex](https://github.com/yourusername/easylatex)
-- 问题反馈: [Issues](https://github.com/yourusername/easylatex/issues)
+- 项目主页: [https://github.com/abby-qi/EasyLaTeX](https://github.com/abby-qi/EasyLaTeX)
+- 问题反馈: [Issues](https://github.com/abby-qi/EasyLaTeX/issues)
 
 ---
 

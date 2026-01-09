@@ -66,6 +66,11 @@ class TeXCompiler:
 
         if self.tinytex_path:
             compiler = os.path.join(self.tinytex_path, 'bin', 'x86_64-linux', compiler)
+        elif sys.platform == 'win32':
+            # Use MiKTeX on Windows if TinyTeX path not specified
+            miktex_path = r'D:\Application\MiKTeX\miktex\bin\x64'
+            if os.path.exists(os.path.join(miktex_path, f'{compiler}.exe')):
+                compiler = os.path.join(miktex_path, f'{compiler}.exe')
 
         return [compiler, '-interaction=nonstopmode', '-file-line-error', tex_file_path]
 
