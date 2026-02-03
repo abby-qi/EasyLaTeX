@@ -2,6 +2,9 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
+// 加载IPC处理函数
+require('./ipc_handlers');
+
 // 确保应用单实例
 const gotTheLock = app.requestSingleInstanceLock();
 

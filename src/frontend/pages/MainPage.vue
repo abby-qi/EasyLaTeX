@@ -119,7 +119,7 @@ export default {
         if (result.success) {
           alert('Word文档导出成功!');
         } else {
-            alert('导出失败: ' + result.message);
+            alert('导出失败: ' + result.error);
           }
       } catch (error) {
         alert('导出失败: ' + error.message);
@@ -140,7 +140,7 @@ export default {
         if (result.success) {
           alert('LaTeX文件导出成功!');
         } else {
-            alert('导出失败: ' + result.message);
+            alert('导出失败: ' + result.error);
           }
       } catch (error) {
         alert('导出失败: ' + error.message);
@@ -161,7 +161,7 @@ export default {
         if (result.success) {
           alert('PDF文件导出成功!');
         } else {
-            alert('导出失败: ' + result.message);
+            alert('导出失败: ' + result.error);
           }
       } catch (error) {
         alert('导出失败: ' + error.message);
