@@ -12,6 +12,7 @@
           <button @click="showDocumentWizard" class="btn-new">新建文档</button>
           <button @click="exportWord" class="btn-word">导出Word</button>
           <button @click="exportTex" class="btn-tex">导出LaTeX</button>
+          <button @click="exportPdf" class="btn-pdf">导出PDF</button>
           <button @click="showAdvancedMode" class="btn-advanced">高级模式</button>
         </div>
       </div>
@@ -105,9 +106,15 @@ export default {
     },
     async exportWord() {
       try {
+        // 打开文件选择对话框
+        const dialogResult = await window.electronAPI.exportFileDialog('word');
+        if (!dialogResult || !dialogResult.success) {
+          return; // 用户取消选择
+        }
+        
         const result = await window.electronAPI.exportWord(
           { content: this.texContent },
-          'output.docx'
+          dialogResult.filePath
         );
         if (result.success) {
           alert('Word文档导出成功!');
@@ -120,12 +127,39 @@ export default {
     },
     async exportTex() {
       try {
+        // 打开文件选择对话框
+        const dialogResult = await window.electronAPI.exportFileDialog('tex');
+        if (!dialogResult || !dialogResult.success) {
+          return; // 用户取消选择
+        }
+        
         const result = await window.electronAPI.exportTex(
           { content: this.texContent },
-          'output.tex'
+          dialogResult.filePath
         );
         if (result.success) {
           alert('LaTeX文件导出成功!');
+        } else {
+            alert('导出失败: ' + result.message);
+          }
+      } catch (error) {
+        alert('导出失败: ' + error.message);
+      }
+    },
+    async exportPdf() {
+      try {
+        // 打开文件选择对话框
+        const dialogResult = await window.electronAPI.exportFileDialog('pdf');
+        if (!dialogResult || !dialogResult.success) {
+          return; // 用户取消选择
+        }
+        
+        const result = await window.electronAPI.exportPdf(
+          { content: this.texContent },
+          dialogResult.filePath
+        );
+        if (result.success) {
+          alert('PDF文件导出成功!');
         } else {
             alert('导出失败: ' + result.message);
           }
@@ -230,6 +264,16 @@ export default {
 
 .btn-tex:hover {
   background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-pdf {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-pdf:hover {
+  background: #c82333;
   transform: translateY(-1px);
 }
 

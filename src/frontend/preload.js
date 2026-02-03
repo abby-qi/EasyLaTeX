@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 文件操作
   openFileDialog: () => ipcRenderer.invoke('open-file-dialog'),
   saveFileDialog: (content) => ipcRenderer.invoke('save-file-dialog', content),
+  exportFileDialog: (exportType) => ipcRenderer.invoke('export-file-dialog', exportType),
   // 菜单事件
   onNewFile: (callback) => ipcRenderer.on('new-file', callback),
   onOpenFile: (callback) => ipcRenderer.on('open-file', callback),

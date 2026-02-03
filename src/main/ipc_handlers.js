@@ -157,3 +157,52 @@ ipcMain.handle('save-file-dialog', async (event, content) => {
     throw new Error('保存文件失败: ' + error.message);
   }
 });
+
+ipcMain.handle('export-file-dialog', async (event, exportType) => {
+  try {
+    let filters = [];
+    let defaultPath = 'output';
+    
+    switch (exportType) {
+      case 'word':
+        filters = [
+          { name: 'Word Documents', extensions: ['docx'] },
+          { name: 'All Files', extensions: ['*'] }
+        ];
+        defaultPath = 'output.docx';
+        break;
+      case 'tex':
+        filters = [
+          { name: 'LaTeX Files', extensions: ['tex'] },
+          { name: 'Text Files', extensions: ['txt'] },
+          { name: 'All Files', extensions: ['*'] }
+        ];
+        defaultPath = 'output.tex';
+        break;
+      case 'pdf':
+        filters = [
+          { name: 'PDF Files', extensions: ['pdf'] },
+          { name: 'All Files', extensions: ['*'] }
+        ];
+        defaultPath = 'output.pdf';
+        break;
+      default:
+        filters = [
+          { name: 'All Files', extensions: ['*'] }
+        ];
+    }
+
+    const result = await dialog.showSaveDialog({
+      filters: filters,
+      defaultPath: defaultPath
+    });
+
+    if (result.canceled || !result.filePath) {
+      return { success: false };
+    }
+
+    return { success: true, filePath: result.filePath };
+  } catch (error) {
+    throw new Error('选择文件路径失败: ' + error.message);
+  }
+});
