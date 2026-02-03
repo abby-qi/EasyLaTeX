@@ -132,7 +132,7 @@ ipcMain.handle('open-file-dialog', async () => {
     const content = await fs.readFile(filePath, 'utf-8');
     return { content };
   } catch (error) {
-    throw new Error(打开文件失败: );
+    throw new Error('打开文件失败: ' + error.message);
   }
 });
 
@@ -154,6 +154,6 @@ ipcMain.handle('save-file-dialog', async (event, content) => {
     await fs.writeFile(result.filePath, content, 'utf-8');
     return { success: true, filePath: result.filePath };
   } catch (error) {
-    throw new Error(保存文件失败: );
+    throw new Error('保存文件失败: ' + error.message);
   }
 });
