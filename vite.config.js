@@ -6,10 +6,10 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './frontend'),
+      '@': path.resolve(__dirname, './src/frontend'),
     },
   },
-  root: 'frontend',
+  root: 'src/frontend',
   base: './',
   build: {
     outDir: '../dist',

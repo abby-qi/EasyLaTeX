@@ -62,8 +62,14 @@ ipcMain.handle('generate-table', async (event, tableData) => {
 
 ipcMain.handle('compile-latex', async (event, texContent) => {
   try {
+    // 计算 TinyTeX 的路径
+    const tinytexPath = path.join(__dirname, '../tinytex');
+    
     const result = await runPythonScript('compiler/tex_compiler.py', [
-      JSON.stringify({ content: texContent })
+      JSON.stringify({ 
+        content: texContent,
+        tinytex_path: tinytexPath 
+      })
     ]);
     return { success: true, pdfPath: result.pdf_path };
   } catch (error) {
@@ -126,7 +132,7 @@ ipcMain.handle('open-file-dialog', async () => {
     const content = await fs.readFile(filePath, 'utf-8');
     return { content };
   } catch (error) {
-    throw new Error(`打开文件失败: ${error.message}`);
+    throw new Error(打开文件失败: );
   }
 });
 
@@ -148,6 +154,6 @@ ipcMain.handle('save-file-dialog', async (event, content) => {
     await fs.writeFile(result.filePath, content, 'utf-8');
     return { success: true, filePath: result.filePath };
   } catch (error) {
-    throw new Error(`保存文件失败: ${error.message}`);
+    throw new Error(保存文件失败: );
   }
 });
