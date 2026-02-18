@@ -62,8 +62,8 @@ ipcMain.handle('generate-table', async (event, tableData) => {
 
 ipcMain.handle('compile-latex', async (event, texContent) => {
   try {
-    // 计算 TinyTeX 的路径
-    const tinytexPath = path.join(__dirname, '../tinytex');
+    // 计算 TinyTeX 的路径（根据install.bat脚本，应该在项目根目录）
+    const tinytexPath = path.join(__dirname, '../../tinytex');
     
     const result = await runPythonScript('compiler/tex_compiler.py', [
       JSON.stringify({ 
@@ -79,8 +79,14 @@ ipcMain.handle('compile-latex', async (event, texContent) => {
 
 ipcMain.handle('export-pdf', async (event, data, outputPath) => {
   try {
+    // 计算 TinyTeX 的路径（根据install.bat脚本，应该在项目根目录）
+    const tinytexPath = path.join(__dirname, '../../tinytex');
+    
     const result = await runPythonScript('exporter/pdf_exporter.py', [
-      JSON.stringify(data),
+      JSON.stringify({
+        ...data,
+        tinytex_path: tinytexPath
+      }),
       outputPath
     ]);
     return { success: true, pdfPath: result.pdf_path };

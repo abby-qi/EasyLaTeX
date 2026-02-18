@@ -22,8 +22,11 @@ def export_pdf(data, output_path):
         if output_dir and not os.path.exists(output_dir):
             os.makedirs(output_dir)
         
+        # 获取TinyTeX路径
+        tinytex_path = data.get('tinytex_path')
+        
         # 编译LaTeX为PDF
-        compile_result = compile_latex(data)
+        compile_result = compile_latex(data, tinytex_path)
         
         if not compile_result.get('success', False):
             return {
@@ -34,7 +37,30 @@ def export_pdf(data, output_path):
         # 复制生成的PDF到指定输出路径
         temp_pdf_path = compile_result.get('pdf_path')
         if temp_pdf_path and os.path.exists(temp_pdf_path):
+            # 确保输出文件路径是绝对路径
+            output_path = os.path.abspath(output_path)
+            
+            # 再次确保输出目录存在（绝对路径可能不同）
+            output_dir = os.path.dirname(output_path)
+            if output_dir and not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            
+            # 复制文件
             shutil.copy2(temp_pdf_path, output_path)
+            
+            # 验证文件是否成功复制
+            if not os.path.exists(output_path):
+                return {
+                    "success": False,
+                    "error": f"PDF文件复制失败，目标路径不存在: {output_path}"
+                }
+                
+            # 验证文件大小
+            if os.path.getsize(output_path) == 0:
+                return {
+                    "success": False,
+                    "error": f"PDF文件复制失败，目标文件为空: {output_path}"
+                }
         else:
             return {
                 "success": False,
@@ -48,7 +74,7 @@ def export_pdf(data, output_path):
     except Exception as e:
         return {
             "success": False,
-            "error": str(e)
+            "error": f"导出失败: {str(e)}"
         }
 
 if __name__ == "__main__":

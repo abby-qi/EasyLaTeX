@@ -29,11 +29,25 @@ def compile_latex(data, tinytex_path=None):
             
             # 如果指定了TinyTeX路径，使用它
             env = os.environ.copy()
-            if tinytex_path and os.path.exists(tinytex_path):
-                # 添加TinyTeX的bin目录到PATH
-                tinytex_bin = os.path.join(tinytex_path, 'bin', 'win32' if os.name == 'nt' else 'linux')
-                if os.path.exists(tinytex_bin):
-                    env['PATH'] = tinytex_bin + os.pathsep + env['PATH']
+            tinytex_used = False
+            
+            if tinytex_path:
+                if os.path.exists(tinytex_path):
+                    # 添加TinyTeX的bin目录到PATH
+                    tinytex_bin = os.path.join(tinytex_path, 'bin', 'win32' if os.name == 'nt' else 'linux')
+                    if os.path.exists(tinytex_bin):
+                        env['PATH'] = tinytex_bin + os.pathsep + env['PATH']
+                        tinytex_used = True
+                    else:
+                        return {
+                            "success": False,
+                            "error": f"TinyTeX路径存在但bin目录不存在: {tinytex_bin}"
+                        }
+                else:
+                    return {
+                        "success": False,
+                        "error": f"TinyTeX未安装，请运行install.bat脚本安装: {tinytex_path}"
+                    }
             
             # 执行编译
             process = subprocess.run(
@@ -48,9 +62,12 @@ def compile_latex(data, tinytex_path=None):
             pdf_path = os.path.join(temp_dir, 'document.pdf')
             if not os.path.exists(pdf_path):
                 # 编译失败，返回错误信息
+                error_msg = f"LaTeX编译失败: {process.stderr or process.stdout}"
+                if not tinytex_used:
+                    error_msg += "\n注意: 未使用TinyTeX，可能使用了系统的LaTeX环境"
                 return {
                     "success": False,
-                    "error": f"LaTeX编译失败: {process.stderr or process.stdout}"
+                    "error": error_msg
                 }
             
             return {
