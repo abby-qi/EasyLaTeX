@@ -1,0 +1,69 @@
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.log
+*.out
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Electron
+out/
+*.asar
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# LaTeX
+*.aux
+*.log
+*.pdf
+*.dvi
+*.bbl
+*.blg
+*.toc
+*.lot
+*.lof
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Test coverage
+coverage/
+htmlcov/
+.pytest_cache/
+
+# Package manager lock files (optional, uncomment if needed)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

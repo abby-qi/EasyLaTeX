@@ -1,0 +1,79 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{ctex}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+{{MAJOR_PACKAGES}}
+
+\geometry{a4paper,left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{{{TITLE}}}
+\fancyhead[R]{第\thepage 页 共\pageref{LastPage}页}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\title{{{TITLE}}}
+\author{{{AUTHOR}}}
+\date{{{DATE}}}
+
+\begin{document}
+
+\maketitle
+
+\section{实验目的}
+1. 在这里写实验目的...
+
+\section{实验原理}
+在这里简述实验所依据的原理与公式：
+
+\begin{equation}
+E = mc^2
+\label{eq:example}
+\end{equation}
+
+\section{实验器材与环境}
+\begin{itemize}
+  \item 器材：
+  \item 软件环境：
+  \item 实验条件：
+\end{itemize}
+
+\section{实验步骤}
+\begin{enumerate}
+  \item 第一步...
+  \item 第二步...
+  \item 第三步...
+\end{enumerate}
+
+\section{实验数据记录}
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{ccc}
+\toprule
+序号 & 测量值1 & 测量值2 \\
+\midrule
+1 & & \\
+2 & & \\
+3 & & \\
+\bottomrule
+\end{tabular}
+\caption{实验数据记录表}
+\label{tab:data}
+\end{table}
+
+\section{数据处理与结果分析}
+在这里进行误差分析、绘图与结果讨论...
+
+\section{思考题}
+1. 在这里回答思考题...
+
+\section{实验结论}
+在这里写实验结论...
+
+\end{document}

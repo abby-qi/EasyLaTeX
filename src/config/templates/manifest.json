@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "note": "编辑本目录下的 .tex 模板文件即可自定义文档模板，重启应用后生效。占位符：{{TITLE}} {{AUTHOR}} {{DATE}} {{MAJOR_PACKAGES}}",
+  "majors": {
+    "math": {
+      "label": "数学专业",
+      "icon": "🔢",
+      "description": "包含数学公式和符号支持",
+      "packages": "\\usepackage{mathtools}\n\\usepackage{mathrsfs}\n\\usepackage{amsthm}\n\\usepackage{wasysym}\n\\newtheorem{theorem}{定理}\n\\newtheorem{definition}{定义}\n\\newtheorem{lemma}{引理}"
+    },
+    "physics": {
+      "label": "物理专业",
+      "icon": "⚛️",
+      "description": "包含物理公式和单位支持",
+      "packages": "\\usepackage{physics}\n\\usepackage{siunitx}\n\\usepackage{mhchem}"
+    },
+    "computer": {
+      "label": "计算机专业",
+      "icon": "💻",
+      "description": "包含代码和算法支持",
+      "packages": "\\usepackage{listings}\n\\usepackage{xcolor}\n\\usepackage{algorithm}\n\\usepackage{algorithmic}\n\\lstset{language=Python, basicstyle=\\ttfamily\\small, keywordstyle=\\color{blue}, stringstyle=\\color{red!70!black}, commentstyle=\\color{green!50!black}, showstringspaces=false, breaklines=true}"
+    },
+    "other": {
+      "label": "其他专业",
+      "icon": "📚",
+      "description": "通用模板，适用于其他专业",
+      "packages": ""
+    }
+  },
+  "templates": [
+    {
+      "id": "thesis",
+      "label": "毕业论文",
+      "icon": "📄",
+      "description": "适用于本科生、研究生的学位论文",
+      "file": "thesis.tex",
+      "defaultTitle": "毕业论文题目",
+      "defaultAuthor": "作者姓名"
+    },
+    {
+      "id": "course_paper",
+      "label": "课程论文",
+      "icon": "📝",
+      "description": "适用于学期课程作业与小论文",
+      "file": "course_paper.tex",
+      "defaultTitle": "课程论文题目",
+      "defaultAuthor": "姓名 学号"
+    },
+    {
+      "id": "report",
+      "label": "实验报告",
+      "icon": "🔬",
+      "description": "适用于课程实验与科研实验记录",
+      "file": "report.tex",
+      "defaultTitle": "实验名称",
+      "defaultAuthor": "姓名 学号"
+    },
+    {
+      "id": "exam",
+      "label": "试卷",
+      "icon": "📋",
+      "description": "适用于各类考试的试卷模板",
+      "file": "exam.tex",
+      "defaultTitle": "课程名称 期末考试试卷",
+      "defaultAuthor": "出题教师"
+    }
+  ]
+}
