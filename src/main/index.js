@@ -1,6 +1,71 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+
+// 生产构建产物是 ES module（<script type="module">）。
+// 之前尝试过 file:// 和自定义 app:// 协议，但前者被 Chromium 的 module CORS 拦截，
+// 后者 registerFileProtocol 返回的 .js 不一定带 text/javascript，module 脚本仍被拒执行，
+// 都会表现为纯白屏、JS 一句都不跑。
+//
+// 最稳的做法：用 Node 内置 http 起一个本地静态服务器托管 src/dist，
+// MIME 类型完全可控，ES module 在同源 http 下既无 CORS 也无 MIME 问题。
+const DIST_DIR = path.join(__dirname, '../dist');
+
+const MIME = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.mjs': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+  '.ttf': 'font/ttf',
+  '.wasm': 'application/wasm',
+};
+
+// 生产环境静态服务器地址（app ready 后启动，端口随机避免冲突）
+let PROD_URL = null;
+
+function startStaticServer() {
+  return new Promise((resolve, reject) => {
+    const server = http.createServer((req, res) => {
+      try {
+        const reqPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+        const rel = reqPath === '/' ? '/index.html' : reqPath;
+        const filePath = path.normalize(path.join(DIST_DIR, rel));
+        // 防目录穿越：必须落在 DIST_DIR 之内
+        if (filePath !== DIST_DIR && !filePath.startsWith(DIST_DIR + path.sep)) {
+          res.writeHead(403);
+          return res.end('Forbidden');
+        }
+        fs.stat(filePath, (err, stat) => {
+          if (err || !stat.isFile()) {
+            res.writeHead(404);
+            return res.end('Not found');
+          }
+          const ext = path.extname(filePath).toLowerCase();
+          res.writeHead(200, {
+            'Content-Type': MIME[ext] || 'application/octet-stream',
+            'Cache-Control': 'no-cache',
+          });
+          fs.createReadStream(filePath).pipe(res);
+        });
+      } catch (e) {
+        res.writeHead(500);
+        res.end('Internal error');
+      }
+    });
+    server.listen(0, '127.0.0.1', () => {
+      resolve(`http://127.0.0.1:${server.address().port}`);
+    });
+    server.on('error', reject);
+  });
+}
 
 // 加载 IPC 处理函数与菜单栏
 require('./ipc_handlers');
@@ -38,28 +103,15 @@ function resolveIcon() {
 
 /**
  * 决定加载哪个页面。
- *
- * 历史问题：vite build 的产物输出在 src/dist，而主进程一直加载
- * src/frontend/index.html。那份 index.html 里是
- * <script type="module" src="./main.js">，main.js 又写了裸导入
- * import { createApp } from 'vue'，浏览器根本解析不了 ——
- * 于是 CHANGELOG 里宣称"修复了启动白屏"，实际上生产模式必然白屏。
- *
- * 现在按优先级选择：dev 地址 -> 构建产物 -> 源码入口（并给出明确警告）。
+ * - --dev：优先连 vite 开发服务器 (localhost:5173)，连不上就回退到本地静态服务器（已构建产物）。
+ * - 其余：本地静态服务器托管的 src/dist/index.html。
  */
 function resolveEntry() {
   const isDev = process.argv.includes('--dev');
   if (isDev) {
-    return { type: 'url', target: 'http://localhost:5173' };
+    return { type: 'url', target: 'http://localhost:5173', fallback: PROD_URL };
   }
-
-  const distIndex = path.join(__dirname, '../dist/index.html');
-  if (fs.existsSync(distIndex)) {
-    return { type: 'file', target: distIndex };
-  }
-
-  const srcIndex = path.join(__dirname, '../frontend/index.html');
-  return { type: 'file', target: srcIndex, warn: true };
+  return { type: 'url', target: PROD_URL };
 }
 
 function createWindow() {
@@ -84,15 +136,15 @@ function createWindow() {
   const entry = resolveEntry();
 
   if (entry.type === 'url') {
+    // 开发模式连不上 5173 时，自动回退到已构建产物，避免白屏
+    if (entry.fallback) {
+      mainWindow.webContents.once('did-fail-load', () => {
+        mainWindow.loadURL(entry.fallback);
+      });
+    }
     mainWindow.loadURL(entry.target);
-    mainWindow.webContents.openDevTools();
-  } else {
-    mainWindow.loadFile(entry.target);
-    if (entry.warn) {
-      console.warn(
-        '[EasyLaTeX] 未找到构建产物 src/dist/index.html，已回退到源码入口。\n' +
-        '如果页面空白，请先执行 npm run build 再启动，或使用 npm run dev。'
-      );
+    if (process.argv.includes('--dev')) {
+      mainWindow.webContents.openDevTools();
     }
   }
 
@@ -106,7 +158,18 @@ function createWindow() {
   });
 }
 
-app.on('ready', () => {
+app.on('ready', async () => {
+  // 先启动本地静态服务器，再建窗口
+  try {
+    PROD_URL = await startStaticServer();
+  } catch (err) {
+    console.error('[EasyLaTeX] 启动静态服务器失败:', err);
+  }
+
+  if (!PROD_URL) {
+    console.error('[EasyLaTeX] 未启动静态服务器，且未找到可用的页面入口，应用可能无法显示内容。');
+  }
+
   setupMenu();
   createWindow();
 });

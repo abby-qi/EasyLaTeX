@@ -30,9 +30,18 @@ if errorlevel 1 (
 
 echo.
 echo [3/4] 正在安装 Python 依赖...
-python -m pip install -r "%PROJECT_ROOT%\src\backend\requirements.txt"
-if errorlevel 1 (
-    echo [警告] Python 依赖安装失败，请检查 Python 是否在 PATH 中
+rem 兼容不同机器上 Python 启动器的命名（py / python / python3）
+set "PYEXE="
+where py >nul 2>nul && set "PYEXE=py"
+if not defined PYEXE where python >nul 2>nul && set "PYEXE=python"
+if not defined PYEXE where python3 >nul 2>nul && set "PYEXE=python3"
+if not defined PYEXE (
+    echo [警告] 未找到 Python（py / python / python3 均不在 PATH 中），跳过 Python 依赖安装
+) else (
+    %PYEXE% -m pip install -r "%PROJECT_ROOT%\src\backend\requirements.txt"
+    if errorlevel 1 (
+        echo [警告] Python 依赖安装失败，请检查 Python/pip 是否可用
+    )
 )
 
 echo.
@@ -62,7 +71,7 @@ del "%TINYTEX_DIR%\TinyTeX.zip" 2>nul
 rem 官方压缩包里多一层 .TinyTeX 目录，摊平到 tinytex\ 下
 if exist "%TINYTEX_DIR%\.TinyTeX" (
     echo 整理目录结构...
-    xcopy "%TINYTEX_DIR%\.TinyTeX\*" "%TINYTEX_DIR%\" /E /Y /Q >nul
+    xcopy "%TINYTEX_DIR%\.TinyTeX\*" "%TINYTEX_DIR%" /E /Y /Q >nul
     rmdir /S /Q "%TINYTEX_DIR%\.TinyTeX"
 )
 
@@ -72,6 +81,7 @@ echo.
 echo 安装完成！
 echo   TinyTeX 路径: %TINYTEX_DIR%
 echo.
-echo 运行 run.bat 启动应用。
+echo 运行 "npm start" 启动应用（它会先构建前端再启动 Electron）。
+echo   注意：不要单独运行 run.bat，它不会构建前端，会导致界面白屏。
 popd
 pause

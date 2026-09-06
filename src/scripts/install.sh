@@ -67,4 +67,5 @@ echo
 echo "安装完成！"
 echo "  TinyTeX 路径: $TINYTEX_DIR"
 echo
-echo "运行 ./run.sh 或 npm start 启动应用。"
+echo "运行 npm start 启动应用（它会先构建前端再启动 Electron）。"
+echo "  注意：不要单独运行根目录的 run.bat，它不会构建前端，会导致界面白屏。"

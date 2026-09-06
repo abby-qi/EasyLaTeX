@@ -60,9 +60,18 @@
 // PDF 渲染：pdf.js（项目此前宣称"实时预览"，但本组件原本是永远显示
 // "正在编译预览…"的死组件，从不调用编译，也从不渲染任何东西）
 import * as pdfjsLib from 'pdfjs-dist';
-import PdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = PdfWorker;
+let workerReady = false;
+async function ensureWorker() {
+  if (workerReady) return;
+  try {
+    const { default: PdfWorker } = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = PdfWorker;
+    workerReady = true;
+  } catch (e) {
+    console.warn('[PreviewPanel] 加载 pdfjs worker 失败，将回退到主线程渲染:', e);
+  }
+}
 
 export default {
   name: 'PreviewPanel',
@@ -126,7 +135,8 @@ export default {
       this.compiling = true;
       this.status = 'loading';
       try {
-        const result = await window.electronAPI.compileLatex(this.texContent, {
+        await ensureWorker();
+      const result = await window.electronAPI.compileLatex(this.texContent, {
           outputDir: undefined,
         });
         if (!result || result.success === false) {

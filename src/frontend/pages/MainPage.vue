@@ -70,6 +70,10 @@ export default {
   },
   mounted() {
     // 主进程菜单栏事件（menu:* 前缀）
+    if (!window.electronAPI) {
+      console.warn('[MainPage] window.electronAPI 未定义，菜单事件监听已跳过。');
+      return;
+    }
     window.electronAPI.onMenu('menu:new-file', () => this.newFile());
     window.electronAPI.onMenu('menu:open-file', () => this.openFile());
     window.electronAPI.onMenu('menu:save-file', () => this.saveFile());

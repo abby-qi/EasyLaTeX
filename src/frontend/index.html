@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EasyLaTeX</title>
   <link rel="stylesheet" href="./styles/global.css">
+  <!-- Electron 28 / Chromium 120 尚未实现 Iterator 全局对象，
+       pdfjs-dist 6.x 却直接访问 Iterator.prototype.join，需先给个空壳避免 ReferenceError。 -->
+  <script>
+    if (typeof Iterator === 'undefined') {
+      window.Iterator = class Iterator {};
+    }
+  </script>
 </head>
 <body>
   <div id="app"></div>
